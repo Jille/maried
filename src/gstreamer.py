@@ -71,19 +71,16 @@ class GstMediaInfo(MediaInfo):
                                 self.on_eos()
 
                 def on_eos(self):
-                        rawpos = self.bin.query_position(
-                                        gst.FORMAT_TIME)[0]
                         try:
-                                rawdur = self.bin.query_duration(
+                                raw = self.bin.query_duration(
                                         gst.FORMAT_TIME)[0]
                         except gst.QueryError:
-                                rawdur = -1
-                        if rawdur == -1:        
+                                raw = -1
+                        if raw == -1:        
                                 self.mi.l.warn('query_duration failed, '+
                                         'falling back to query_position')
-                                raw = rawpos
-                        else:
-                                raw = rawdur
+                                raw = self.bin.query_position(
+                                        gst.FORMAT_TIME)[0]
                         self.result['length'] = raw / (1000.0**3)
                         self.finish()
                 
